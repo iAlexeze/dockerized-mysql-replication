@@ -1,0 +1,11 @@
+services:
+  edsphc-replica:
+    image: mysql:8.0
+    env_file:
+      - ./edsphc-replica.env
+    container_name: "edsphc-replica"
+    restart: "on-failure"
+    ports:
+      - 3311:3306
+    volumes:
+      - ./mysql.conf.cnf:/etc/mysql/conf.d/mysql.conf.cnf
