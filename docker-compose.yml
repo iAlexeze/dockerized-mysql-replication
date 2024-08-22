@@ -1,32 +1,31 @@
-version: '3'
 services:
-  mysql_master:
+  edsphc-source:
     image: mysql:8.0
     env_file:
-      - ./master/mysql_master.env
-    container_name: "mysql_master"
+      - ./source/edsphc-source.env
+    container_name: "edsphc-source"
     restart: "no"
     ports:
       - 4406:3306
     volumes:
-      - ./master/conf/mysql.conf.cnf:/etc/mysql/conf.d/mysql.conf.cnf
-      - ./master/data:/var/lib/mysql
+      - ./source/mysql.conf.cnf:/etc/mysql/conf.d/mysql.conf.cnf
     networks:
       - overlay
 
-  mysql_slave:
+  edsphc-replica:
     image: mysql:8.0
     env_file:
-      - ./slave/mysql_slave.env
-    container_name: "mysql_slave"
+      - ./replica/edsphc-replica.env
+    container_name: "edsphc-replica"
     restart: "no"
     ports:
       - 5506:3306
     depends_on:
-      - mysql_master
+      - edsphc-source
     volumes:
-      - ./slave/conf/mysql.conf.cnf:/etc/mysql/conf.d/mysql.conf.cnf
-      - ./slave/data:/var/lib/mysql
+      - ./replica/mysql.conf.cnf:/etc/mysql/conf.d/mysql.conf.cnf
+      - ./wait-for-it.sh:/wait-for-it.sh
+      - ./setup_replication.sh:/setup_replication.sh
     networks:
       - overlay
 
