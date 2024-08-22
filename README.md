@@ -5,7 +5,7 @@ This repository provides a setup for source-replica data replication between two
 ## Prerequisites
 
 - 2 or more servers (depending on your use case)
-- Docker Compose installed
+- Docker and Docker Compose installed
 - Basic knowledge of Linux and Docker Compose
 
 ## Getting Started
@@ -15,7 +15,7 @@ This repository provides a setup for source-replica data replication between two
 Clone this repository on both the source and replica servers:
 
 ```bash
-git clone -b dev git@bitbucket.org:interswitch/edodida-replication.git
+git clone https://github.com/iAlexeze/dockerized-mysql-replication.git
 ```
 
 ### 2. Setting Up the Source Server
@@ -23,7 +23,7 @@ git clone -b dev git@bitbucket.org:interswitch/edodida-replication.git
 Navigate to the `source` directory on the source server:
 
 ```bash
-cd edodida-replication/source
+cd dockerized-mysql-replication/source
 ```
 
 #### 2.1 Modify `compose.yml`
@@ -35,7 +35,7 @@ cd edodida-replication/source
   # - /mnt/data-backup:/var/lib/mysql
   ```
 
-- Ensure that port `3110` is available and open on the server to avoid conflicts.
+- Ensure that port `3110` is available and open on the server to avoid conflicts. You can change the port if you want.
 
 #### 2.2 Modify `source.env`
 
@@ -91,7 +91,7 @@ If successful, you'll see a snippet with the `Log` and `Position` information. C
 Navigate to the `replica` directory on the replica server:
 
 ```bash
-cd edodida-replication/replica
+cd dockerized-mysql-replication/replica
 ```
 
 #### 3.1 Modify `setup_replication.sh`
@@ -109,15 +109,15 @@ These values are crucial for connecting the replica to the source. Also, update 
 REPLICA="replica"  # Container name for the replica database
 SOURCE_HOST="source_ip_address"
 SOURCE_PORT=source_port  # DO NOT PUT THIS IN QUOTES
-MYSQL_ROOT_PASSWORD=my_secure_root_password
-MYSQL_USER=my_replication_user
-MYSQL_PASSWORD=my_secure_replication_user_password
+MYSQL_ROOT_PASSWORD="my_secure_root_password"
+MYSQL_USER="my_replication_user"
+MYSQL_PASSWORD="my_secure_replication_user_password"
 databases=("demo-1" "demo-2" "demo-3")
 ```
 
 #### 3.2 Modify `compose.yml`
 
-- Ensure that port `3111` is available and open on the server to avoid conflicts.
+- Ensure that port `3111` is available and open on the server to avoid conflicts. You can change the port if you want.
 
 #### 3.3 Modify `replica.env`
 
@@ -169,7 +169,3 @@ For any questions or comments, please reach out via the repository's issue track
 ## Conclusion
 
 With this setup, you can easily manage data replication between a source server and multiple replicas, ensuring data consistency and redundancy across your infrastructure.
-
----
-
-Replace `<repository_url>` with the actual URL of your repository before sharing the README.
