@@ -38,12 +38,18 @@ check_exit_status() {
 }
 
 # Declare variables
-REPLICA="edsphc-replica"
-SOURCE_HOST="54.183.246.99"
-SOURCE_PORT=3310
-MYSQL_ROOT_PASSWORD="R2VuZXJhbGtleQ"
-REPLICATION_USER="edodidareplica"
-REPLICATION_PASSWORD="WTdlZG9kaWRhwqM"
+REPLICA="replica-database" # Container name for replica database(If you changed it in the compose.yml, then you should use the same name here)
+SOURCE_HOST="source_ip_address"
+SOURCE_PORT=source_port
+MYSQL_ROOT_PASSWORD=my_secure_root_password
+MYSQL_USER=my_replication_user
+MYSQL_PASSWORD=my_secure_replication_user_password
+databases=("demo-1" "demo-2" "demo-3")
+
+
+# Variables from Source Server
+CURRENT_LOG="1.xxxxx"
+CURRENT_POS="2xxx"
 
 # Clean up and start containers
 echo
@@ -67,8 +73,6 @@ done
 check_exit_status "$REPLICA database connection established." "Failed to connect to $REPLICA"
 
 log_info "Setting up databases and users..."
-
-databases=("datahub" "einsure" "eclinic")
 for db in "${databases[@]}"; do
     log_info "Checking if database $db exists..."
     DB_EXISTS=$(docker exec $REPLICA sh -c "export MYSQL_PWD=$MYSQL_ROOT_PASSWORD; mysql -u root -e 'SHOW DATABASES LIKE \"$db\";'")
@@ -80,9 +84,6 @@ for db in "${databases[@]}"; do
         log_info "Database **${yellow}$db${reset}** already exists. Skipping creation."
     fi
 done
-
-CURRENT_LOG="1.000013"
-CURRENT_POS="1237"
 
 start_replica_statement="CHANGE MASTER TO MASTER_HOST='$SOURCE_HOST', MASTER_PORT=$SOURCE_PORT, MASTER_USER='$REPLICATION_USER', MASTER_PASSWORD='$REPLICATION_PASSWORD', MASTER_LOG_FILE='$CURRENT_LOG', MASTER_LOG_POS=$CURRENT_POS; START SLAVE;"
 start_replica_cmd='export MYSQL_PWD=$MYSQL_ROOT_PASSWORD; mysql -u root -e "'
