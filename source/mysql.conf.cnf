@@ -6,6 +6,8 @@ default_authentication_plugin = mysql_native_password
 server-id = 1
 log_bin = 1
 binlog_format = ROW
-binlog_do_db = datahub
-binlog_do_db = eclinic
-binlog_do_db = einsure
+
+# Add as many databases you want to replicate as possible
+binlog_do_db = demo-1
+binlog_do_db = demo-2
+binlog_do_db = demo-3

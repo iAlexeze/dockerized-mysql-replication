@@ -1,12 +1,13 @@
 services:
-  edsphc-source:
+  source-database:
     image: mysql:8.0
     env_file:
-      - ./edsphc-source.env
-    container_name: "edsphc-source"
+      - ./source.env
+    container_name: "source-database"
     restart: "on-failure"
     ports:
       - 3310:3306
     volumes:
       - ./mysql.conf.cnf:/etc/mysql/conf.d/mysql.conf.cnf
-      - /mnt/edodida-backup:/var/lib/mysql
+      # Map a directory to backup data. (Optional)
+      # - /mnt/data-backup:/var/lib/mysql

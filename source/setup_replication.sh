@@ -37,10 +37,11 @@ check_exit_status() {
     fi
 }
 
-# Declare variables
-SOURCE="edsphc-source"
-MYSQL_ROOT_PASSWORD="R2VuZXJhbGtleQ"
-DEFAULT_USER="edodidauser"
+SOURCE="source-database" # Container name for source database(If you changed it in the compose.yml, then you should use the same name here)
+MYSQL_ROOT_PASSWORD="my_secure_root_password"
+DEFAULT_USER="my_default_user"
+DEFAULT_PASSWORD="my_secure_default_password"
+databases=("demo-1" "demo-2" "demo-3")
 
 # Clean up and start containers
 echo
@@ -65,8 +66,6 @@ done
 check_exit_status "$SOURCE database connection established." "Failed to connect to $SOURCE"
 
 log_info "Setting up databases and users..."
-
-databases=("datahub" "einsure" "eclinic")
 for db in "${databases[@]}"; do
     log_info "Checking if database $db exists..."
     DB_EXISTS=$(docker exec $SOURCE sh -c "export MYSQL_PWD=$MYSQL_ROOT_PASSWORD; mysql -u root -e 'SHOW DATABASES LIKE \"$db\";'")
@@ -80,7 +79,7 @@ for db in "${databases[@]}"; do
 done
 
 log_info "Setting up Default User - $DEFAULT_USER..."
-docker exec $SOURCE sh -c "export MYSQL_PWD=$MYSQL_ROOT_PASSWORD; mysql -u root -e 'CREATE USER IF NOT EXISTS \"$DEFAULT_USER\"@\"%\" IDENTIFIED BY \"WTdlZG9kaWRhwqM\"; GRANT ALL PRIVILEGES ON *.* TO \"$DEFAULT_USER\"@\"%\"; FLUSH PRIVILEGES;'"
+docker exec $SOURCE sh -c "export MYSQL_PWD=$MYSQL_ROOT_PASSWORD; mysql -u root -e 'CREATE USER IF NOT EXISTS \"$DEFAULT_USER\"@\"%\" IDENTIFIED BY \"$DEFAULT_PASSWORD\"; GRANT ALL PRIVILEGES ON *.* TO \"$DEFAULT_USER\"@\"%\"; FLUSH PRIVILEGES;'"
 check_exit_status "User $DEFAULT_USER set up." "Failed to set up user $DEFAULT_USER."
 
 log_info "Checking if replication user exists..."
