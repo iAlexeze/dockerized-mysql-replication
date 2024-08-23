@@ -1,9 +1,9 @@
 services:
-  edsphc-replica:
+  replica-database:
     image: mysql:8.0
     env_file:
       - ./edsphc-replica.env
-    container_name: "edsphc-replica"
+    container_name: "replica-database"
     restart: "on-failure"
     ports:
       - 3311:3306
