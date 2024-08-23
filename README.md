@@ -106,7 +106,7 @@ CURRENT_POS="2xxx"
 These values are crucial for connecting the replica to the source. Also, update the following variables:
 
 ```bash
-REPLICA="replica"  # Container name for the replica database
+REPLICA="replica-database"  # Container name for the replica database
 SOURCE_HOST="source_ip_address"
 SOURCE_PORT=source_port  # DO NOT PUT THIS IN QUOTES
 MYSQL_ROOT_PASSWORD="my_secure_root_password"
@@ -157,7 +157,93 @@ Execute the setup script:
 ```bash
 ./setup_replication.sh
 ```
+### 6. Testing the Replication
 
+After setting up the source and replica servers, it’s crucial to test the replication to ensure that data is properly synchronized.
+
+#### On the Source Server
+
+1. **Login to the Source Database Container:**
+
+   Use the following command to log in to the source database container and access the `demo-1` database:
+
+   ```bash
+   docker exec -it source-database bash -c "mysql -u my_default_user -p demo-1"
+   ```
+
+   - You will be prompted to enter the password:
+   - Enter the password: `my_secure_default_password`
+
+2. **Create a Table:**
+
+   Once you are in the MySQL environment, run the following command to create a table in the `demo-1` database:
+
+   ```sql
+   CREATE TABLE demo_table (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255) NOT NULL);
+   ```
+
+   - Insert a record into the table:
+
+   ```sql
+   INSERT INTO demo_table (name) VALUES ('Test Record');
+   ```
+
+#### On the Replica Server
+
+1. **Login to the Replica Database Container:**
+
+   Use the following command to log in to the replica database container and access the same `demo-1` database:
+
+   ```bash
+   docker exec -it replica-database bash -c "mysql -u my_default_user -p demo-1"
+   ```
+
+   - You will be prompted to enter the password:
+   - Enter the password: `my_secure_default_password`
+
+2. **Show the Created Table:**
+
+   Once you are in the MySQL environment, run the following command to display the tables in the `demo-1` database:
+
+   ```sql
+   SHOW TABLES;
+   ```
+
+   - You should see `demo_table` listed.
+
+3. **Verify the Data:**
+
+   To verify that the data has been replicated, run the following command:
+
+   ```sql
+   SELECT * FROM demo_table;
+   ```
+
+   - You should see the record (`'Test Record'`) that was inserted in the source database.
+
+4. **Confirm Replication:**
+
+   To further confirm replication, you can drop the table in the source database and check again on the replica:
+
+   **On the Source Server:**
+
+   ```sql
+   DROP TABLE demo_table;
+   ```
+
+   **On the Replica Server:**
+
+   ```sql
+   SHOW TABLES;
+   ```
+
+   - The `demo_table` should no longer exist, indicating that the drop action was replicated successfully.
+
+---
+
+## Conclusion
+
+With this setup and testing procedure, you can ensure that the MySQL replication between the source and replica servers is functioning correctly. This allows for efficient data synchronization and redundancy across your infrastructure.
 ## Contributions
 
 Contributions are welcome! Feel free to open issues or submit pull requests.
