@@ -1,0 +1,16 @@
+services:
+  replica-database:
+    image: mysql:8.0
+    env_file:
+      - ./replica.env
+    container_name: "replica-database"
+    restart: "on-failure"
+    ports:
+      - 4441:3306
+    volumes:
+      - ./mysql.conf.cnf:/etc/mysql/conf.d/mysql.conf.cnf
+    networks:
+      - replication-net
+
+networks:
+  replication-net:

@@ -1,0 +1,13 @@
+[mysqld]
+
+skip-name-resolve
+default_authentication_plugin = mysql_native_password
+
+server-id = 1
+log_bin = 1
+binlog_format = ROW
+
+# Add as many databases you want to replicate as possible
+binlog_do_db = demo_1
+binlog_do_db = demo_2
+binlog_do_db = demo_3
