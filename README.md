@@ -265,8 +265,6 @@ After setting up the source and replica servers, it’s crucial to test the repl
 
    - The `demo_table` should no longer exist, indicating that the drop action was replicated successfully.
 
----
-
 ### 1. Clean Up
 
 Run the following commands on both the source and replica servers to clean up.
@@ -282,6 +280,8 @@ On replica server:
 ```bash
 docker compose down replica-database
 ```
+
+---
 
 ## Conclusion
 
