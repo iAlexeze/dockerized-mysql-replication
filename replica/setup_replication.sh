@@ -39,26 +39,24 @@ check_exit_status() {
 
 # Required variables
 REPLICA="replica-database" # Container name for replica database(If you changed it in the compose.yml, then you should use the same name here)
-SOURCE_HOST="source_ip_address"
-SOURCE_PORT=4440
 MYSQL_ROOT_PASSWORD=my_secure_root_password
-
-# Replication user details as seen in source server
-REPLICATION_USER="my_replication_user"
-REPLICATION_PASSWORD="my_secure_replication_password"
 
 # List of databases to be replicated
 DATABASES=("demo_1" "demo_2" "demo_3")
+
+# variables from Source Server
+SOURCE_HOST="source_ip_address"
+SOURCE_PORT=4440
+REPLICATION_USER="my_replication_user"
+REPLICATION_PASSWORD="my_secure_replication_password"
+CURRENT_LOG="1.xxxxx"
+CURRENT_POS="2xxx"
 
 # (Optional)
 # To enable future connection to replica without using root user -  important for debugging, and 3rd party connections
 DEFAULT_USER="my_default_user"
 DEFAULT_PASSWORD="my_secure_default_password"
 
-
-# Variables from Source Server
-CURRENT_LOG="1.xxxxx"
-CURRENT_POS="2xxx"
 
 # Clean up and start containers
 echo
