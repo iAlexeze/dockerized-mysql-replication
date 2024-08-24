@@ -94,9 +94,9 @@ for db in "${DATABASES[@]}"; do
     fi
 done
 
-if $DEFAULT_USER; then
+if [ -n "$DEFAULT_USER" ]; then
     log_info "Setting up Default User - $DEFAULT_USER..."
-    docker exec $SOURCE sh -c "export MYSQL_PWD=$MYSQL_ROOT_PASSWORD; mysql -u root -e 'CREATE USER IF NOT EXISTS \"$DEFAULT_USER\"@\"%\" IDENTIFIED BY \"$DEFAULT_PASSWORD\"; GRANT ALL PRIVILEGES ON *.* TO \"$DEFAULT_USER\"@\"%\"; FLUSH PRIVILEGES;'"
+    docker exec $REPLICA sh -c "export MYSQL_PWD=$MYSQL_ROOT_PASSWORD; mysql -u root -e 'CREATE USER IF NOT EXISTS \"$DEFAULT_USER\"@\"%\" IDENTIFIED BY \"$DEFAULT_PASSWORD\"; GRANT ALL PRIVILEGES ON *.* TO \"$DEFAULT_USER\"@\"%\"; FLUSH PRIVILEGES;'"
     check_exit_status "User $DEFAULT_USER set up." "Failed to set up user $DEFAULT_USER."
 fi
 

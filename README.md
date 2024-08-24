@@ -89,11 +89,15 @@ Execute the setup script:
 This script will set up the source database server, create the listed databases, and output the necessary information for setting up the replica:
 
 ```
+Source Host: source_ip_address
+Source Port: source_port
+Replication User: replication_user
+Replication Password: replication_password
 Current Log: 1.xxxxx
 Current Position: 2xxx
 ```
 
-If successful, you'll see the above snippet with the `Log` and `Position` information. Copy this output as it will be needed for the replica setup.
+If successful, you'll see the above snippet with the `Log` and `Position` and other useful information. Copy this output as it will be needed for the replica setup.
 
 ### 3. Setting Up the Replica Server
 
@@ -108,6 +112,10 @@ cd dockerized-mysql-replication/replica
 Update the following variables using the outputs from the source server's setup script:
 
 ```bash
+SOURCE_HOST="source_ip_address"
+SOURCE_PORT=source_port
+REPLICATION_USER="replication_user"
+REPLICATION_PASSWORD="replication_password"
 CURRENT_LOG="1.xxxxx"
 CURRENT_POS="2xxx"
 ```
