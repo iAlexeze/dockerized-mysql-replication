@@ -52,9 +52,9 @@ MYSQL_PASSWORD=my_secure_default_password
 Specify the databases you want to replicate:
 
 ```cnf
-binlog_do_db = demo-1
-binlog_do_db = demo-2
-binlog_do_db = demo-3
+binlog_do_db = demo_1
+binlog_do_db = demo_2
+binlog_do_db = demo_3
 ```
 
 #### 2.4 Modify `setup_replication.sh`
@@ -66,7 +66,7 @@ SOURCE="source-database"  # Container name for the source database
 MYSQL_ROOT_PASSWORD="my_secure_root_password"
 DEFAULT_USER="my_default_user"
 DEFAULT_PASSWORD="my_secure_default_password"
-databases=("demo-1" "demo-2" "demo-3")
+databases=("demo_1" "demo_2" "demo_3")
 ```
 
 This script will set up the source database server, create the listed databases, and output the necessary information for setting up the replica:
@@ -112,7 +112,7 @@ SOURCE_PORT=source_port  # DO NOT PUT THIS IN QUOTES
 MYSQL_ROOT_PASSWORD="my_secure_root_password"
 MYSQL_USER="my_replication_user"
 MYSQL_PASSWORD="my_secure_replication_user_password"
-databases=("demo-1" "demo-2" "demo-3")
+databases=("demo_1" "demo_2" "demo_3")
 ```
 
 #### 3.2 Modify `compose.yml`
@@ -134,9 +134,9 @@ MYSQL_PASSWORD=my_secure_replication_user_password
 Specify the databases you want to replicate:
 
 ```cnf
-binlog_do_db = demo-1
-binlog_do_db = demo-2
-binlog_do_db = demo-3
+binlog_do_db = demo_1
+binlog_do_db = demo_2
+binlog_do_db = demo_3
 ```
 
 ### 4. Setting Up Additional Replicas
@@ -165,10 +165,10 @@ After setting up the source and replica servers, it’s crucial to test the repl
 
 1. **Login to the Source Database Container:**
 
-   Use the following command to log in to the source database container and access the `demo-1` database:
+   Use the following command to log in to the source database container and access the `demo_1` database:
 
    ```bash
-   docker exec -it source-database bash -c "mysql -u my_default_user -p demo-1"
+   docker exec -it source-database bash -c "mysql -u my_default_user -p demo_1"
    ```
 
    - You will be prompted to enter the password:
@@ -176,7 +176,7 @@ After setting up the source and replica servers, it’s crucial to test the repl
 
 2. **Create a Table:**
 
-   Once you are in the MySQL environment, run the following command to create a table in the `demo-1` database:
+   Once you are in the MySQL environment, run the following command to create a table in the `demo_1` database:
 
    ```sql
    CREATE TABLE demo_table (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255) NOT NULL);
@@ -192,10 +192,10 @@ After setting up the source and replica servers, it’s crucial to test the repl
 
 1. **Login to the Replica Database Container:**
 
-   Use the following command to log in to the replica database container and access the same `demo-1` database:
+   Use the following command to log in to the replica database container and access the same `demo_1` database:
 
    ```bash
-   docker exec -it replica-database bash -c "mysql -u my_default_user -p demo-1"
+   docker exec -it replica-database bash -c "mysql -u my_default_user -p demo_1"
    ```
 
    - You will be prompted to enter the password:
@@ -203,7 +203,7 @@ After setting up the source and replica servers, it’s crucial to test the repl
 
 2. **Show the Created Table:**
 
-   Once you are in the MySQL environment, run the following command to display the tables in the `demo-1` database:
+   Once you are in the MySQL environment, run the following command to display the tables in the `demo_1` database:
 
    ```sql
    SHOW TABLES;

@@ -13,6 +13,8 @@ services:
       # - /mnt/data-backup:/var/lib/mysql
     networks:
       - replication-net
+    profiles:
+      - source
 
 networks:
   replication-net:

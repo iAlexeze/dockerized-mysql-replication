@@ -11,6 +11,8 @@ services:
       - ./mysql.conf.cnf:/etc/mysql/conf.d/mysql.conf.cnf
     networks:
       - replication-net
+    profiles:
+      - replica
 
 networks:
   replication-net:

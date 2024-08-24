@@ -41,17 +41,17 @@ SOURCE="source-database" # Container name for source database(If you changed it 
 MYSQL_ROOT_PASSWORD="my_secure_root_password"
 DEFAULT_USER="my_default_user"
 DEFAULT_PASSWORD="my_secure_default_password"
-databases=("demo-1" "demo-2" "demo-3")
+databases=("demo_1" "demo_2" "demo_3")
 
 # Clean up and start containers
 echo
 log_info "Stopping and removing existing containers..."
-docker compose down -v
+docker compose down $SOURCE -v
 check_exit_status "Containers stopped and removed." "Failed to stop/remove containers."
 
 echo
 log_info "Starting containers..."
-docker compose up -d
+docker compose up $SOURCE -d
 check_exit_status "Containers started." "Failed to start containers."
 
 echo

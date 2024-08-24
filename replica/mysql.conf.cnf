@@ -7,6 +7,6 @@ server-id = 2
 log_bin = 1
 
 # Add as many databases you want to replicate as possible
-binlog_do_db = demo-1
-binlog_do_db = demo-2
-binlog_do_db = demo-3
+binlog_do_db = demo_1
+binlog_do_db = demo_2
+binlog_do_db = demo_3
