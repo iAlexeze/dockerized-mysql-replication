@@ -9,3 +9,8 @@ services:
       - 4441:3306
     volumes:
       - ./mysql.conf.cnf:/etc/mysql/conf.d/mysql.conf.cnf
+    networks:
+      - replication-net
+
+networks:
+  replication-net:
