@@ -6,7 +6,7 @@ services:
     container_name: "source-database"
     restart: "on-failure"
     ports:
-      - 3310:3306
+      - 4440:3306
     volumes:
       - ./mysql.conf.cnf:/etc/mysql/conf.d/mysql.conf.cnf
       # Map a directory to backup data. (Optional)
