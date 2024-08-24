@@ -19,14 +19,14 @@ SSH_KEY="${HOME_DIR}/.ssh/$SSH_KEY_KEY_NAME"
 debug "Replication Setup Started..."
 
 # Main execution
-# cleanup_container "source"
-# start_container "$SOURCE"
-# wait_for_db_connection "$SOURCE"
-# setup_databases "$SOURCE"
-# setup_default_user "$SOURCE"
-# setup_replication_user "$SOURCE"
-# fetch_replication_status "$SOURCE"
-# update_replica_setup 
+cleanup_container "source"
+start_container "$SOURCE"
+wait_for_db_connection "$SOURCE"
+setup_databases "$SOURCE"
+setup_default_user "$SOURCE"
+setup_replication_user "$SOURCE"
+fetch_replication_status "$SOURCE"
+update_replica_setup 
 setup_replica_server
 
 success_message "MySQL source server setup completed successfully."
