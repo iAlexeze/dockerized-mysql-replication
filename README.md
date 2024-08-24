@@ -35,7 +35,7 @@ cd dockerized-mysql-replication/source
   # - /mnt/data-backup:/var/lib/mysql
   ```
 
-- Ensure that port `3110` is available and open on the server to avoid conflicts. You can change the port if you want.
+- Ensure that port `4440` is available and open on the server to avoid conflicts. You can change the port if you want.
 
 #### 2.2 Modify `source.env`
 
@@ -117,7 +117,7 @@ databases=("demo-1" "demo-2" "demo-3")
 
 #### 3.2 Modify `compose.yml`
 
-- Ensure that port `3111` is available and open on the server to avoid conflicts. You can change the port if you want.
+- Ensure that port `4441` is available and open on the server to avoid conflicts. You can change the port if you want.
 
 #### 3.3 Modify `replica.env`
 

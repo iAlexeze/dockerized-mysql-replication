@@ -40,7 +40,7 @@ check_exit_status() {
 # Declare variables
 REPLICA="replica-database" # Container name for replica database(If you changed it in the compose.yml, then you should use the same name here)
 SOURCE_HOST="source_ip_address"
-SOURCE_PORT=source_port
+SOURCE_PORT=4440
 MYSQL_ROOT_PASSWORD=my_secure_root_password
 MYSQL_USER=my_replication_user
 MYSQL_PASSWORD=my_secure_replication_user_password
