@@ -2,10 +2,10 @@ services:
   replica-database:
     image: mysql:8.0
     env_file:
-      - ./edsphc-replica.env
+      - ./replica.env
     container_name: "replica-database"
     restart: "on-failure"
     ports:
-      - 3311:3306
+      - 4441:3306
     volumes:
       - ./mysql.conf.cnf:/etc/mysql/conf.d/mysql.conf.cnf
