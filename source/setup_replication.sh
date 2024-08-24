@@ -118,7 +118,7 @@ CURRENT_POS=$(echo $SOURCE_STATUS | awk '{print $7}')
 
 echo
 echo "----------------------------------------------------------"
-log_info "Source IP: ${green}$SOURCE_IP_ADDRESS${reset}"
+log_info "Source Host: ${green}$SOURCE_IP_ADDRESS${reset}"
 log_info "Source Port: $SOURCE_PORT"
 log_info "Replication User: ${yellow}$REPLICATION_USER${reset}"
 log_info "Replication Password: ${green}$REPLICATION_PASSWORD${reset}"
