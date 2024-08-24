@@ -88,7 +88,7 @@ for db in "${DATABASES[@]}"; do
     fi
 done
 
-if $DEFAULT_USER; then
+if [ -n "$DEFAULT_USER" ]; then
     log_info "Setting up Default User - $DEFAULT_USER..."
     docker exec $SOURCE sh -c "export MYSQL_PWD=$MYSQL_ROOT_PASSWORD; mysql -u root -e 'CREATE USER IF NOT EXISTS \"$DEFAULT_USER\"@\"%\" IDENTIFIED BY \"$DEFAULT_PASSWORD\"; GRANT ALL PRIVILEGES ON *.* TO \"$DEFAULT_USER\"@\"%\"; FLUSH PRIVILEGES;'"
     check_exit_status "User $DEFAULT_USER set up." "Failed to set up user $DEFAULT_USER."
@@ -111,16 +111,18 @@ log_info "Fetching current replication status..."
 SOURCE_STATUS=$(docker exec $SOURCE sh -c 'export MYSQL_PWD=$MYSQL_ROOT_PASSWORD; mysql -u root -e "SHOW MASTER STATUS"')
 check_exit_status "Fetched current replication status." "Failed to fetch current replication status."
 
-SOURCE_IP_ADDRESS=$(curl icanhazip.com)
+SOURCE_IP_ADDRESS=$(curl -s icanhazip.com)
+SOURCE_PORT=$(grep -A 1 "ports:" compose.yml | grep -oP '\d+(?=:3306)')
 CURRENT_LOG=$(echo $SOURCE_STATUS | awk '{print $6}')
 CURRENT_POS=$(echo $SOURCE_STATUS | awk '{print $7}')
 
+echo
 echo "----------------------------------------------------------"
 log_info "Source IP: ${green}$SOURCE_IP_ADDRESS${reset}"
 log_info "Source Port: $SOURCE_PORT"
 log_info "Replication User: ${yellow}$REPLICATION_USER${reset}"
 log_info "Replication Password: ${green}$REPLICATION_PASSWORD${reset}"
-log_info "Current Log: $CURRENT_LOG"
+log_info "Current Log: ${red}$CURRENT_LOG${reset}"
 log_info "Current Position: ${yellow}$CURRENT_POS${reset}"
 echo "----------------------------------------------------------"
 echo
