@@ -111,13 +111,19 @@ log_info "Fetching current replication status..."
 SOURCE_STATUS=$(docker exec $SOURCE sh -c 'export MYSQL_PWD=$MYSQL_ROOT_PASSWORD; mysql -u root -e "SHOW MASTER STATUS"')
 check_exit_status "Fetched current replication status." "Failed to fetch current replication status."
 
+SOURCE_IP_ADDRESS=$(curl icanhazip.com)
 CURRENT_LOG=$(echo $SOURCE_STATUS | awk '{print $6}')
 CURRENT_POS=$(echo $SOURCE_STATUS | awk '{print $7}')
 
 echo "----------------------------------------------------------"
+log_info "Source IP: ${green}$SOURCE_IP_ADDRESS${reset}"
+log_info "Source Port: $SOURCE_PORT"
+log_info "Replication User: ${yellow}$REPLICATION_USER${reset}"
+log_info "Replication Password: ${green}$REPLICATION_PASSWORD${reset}"
 log_info "Current Log: $CURRENT_LOG"
-log_info "Current Position: $CURRENT_POS"
+log_info "Current Position: ${yellow}$CURRENT_POS${reset}"
 echo "----------------------------------------------------------"
 echo
 log_info "Use the information above to setup the replica MYSQL server"
 success_message "MySQL replication setup completed successfully."
+

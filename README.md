@@ -71,7 +71,7 @@ DATABASES=("demo_1" "demo_2" "demo_3")
 
 (Optional)
 
-To enable future connection to source without using root user, set the following variables -  important for debugging, and 3rd party connections.
+To enable future connections to source without using root user, set the following variables -  important for debugging, and 3rd party connections.
 
 ```bash
 DEFAULT_USER="my_default_user"
@@ -126,7 +126,7 @@ DATABASES=("demo_1" "demo_2" "demo_3")
 
 (Optional)
 
-To enable future connection to replica without using root user -  important for debugging, and 3rd party connections.
+To enable future connections to replica without using root user -  important for debugging, and 3rd party connections.
 
 ```bash
 DEFAULT_USER="my_default_user"
