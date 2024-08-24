@@ -108,7 +108,7 @@ These values are crucial for connecting the replica to the source. Also, update 
 ```bash
 REPLICA="replica-database"  # Container name for the replica database
 SOURCE_HOST="source_ip_address"
-SOURCE_PORT=source_port  # DO NOT PUT THIS IN QUOTES
+SOURCE_PORT=4440  # DO NOT PUT THIS IN QUOTES
 MYSQL_ROOT_PASSWORD="my_secure_root_password"
 MYSQL_USER="my_replication_user"
 MYSQL_PASSWORD="my_secure_replication_user_password"

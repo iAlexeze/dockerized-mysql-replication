@@ -41,6 +41,9 @@ SOURCE="source-database" # Container name for source database(If you changed it 
 MYSQL_ROOT_PASSWORD="my_secure_root_password"
 DEFAULT_USER="my_default_user"
 DEFAULT_PASSWORD="my_secure_default_password"
+REPLICATION_USER="my_replication_user"
+REPLICATION_PASSWORD="my_secure_replication_user_password"
+
 databases=("demo_1" "demo_2" "demo_3")
 
 # Clean up and start containers
@@ -83,15 +86,15 @@ docker exec $SOURCE sh -c "export MYSQL_PWD=$MYSQL_ROOT_PASSWORD; mysql -u root 
 check_exit_status "User $DEFAULT_USER set up." "Failed to set up user $DEFAULT_USER."
 
 log_info "Checking if replication user exists..."
-REPLICA_USER_EXISTS=$(docker exec $SOURCE sh -c "export MYSQL_PWD=$MYSQL_ROOT_PASSWORD; mysql -u root -e 'SELECT EXISTS(SELECT 1 FROM mysql.user WHERE user = \"edodidareplica\" AND host = \"%\");'" | tail -n1)
+REPLICA_USER_EXISTS=$(docker exec $SOURCE sh -c "export MYSQL_PWD=$MYSQL_ROOT_PASSWORD; mysql -u root -e 'SELECT EXISTS(SELECT 1 FROM mysql.user WHERE user = \"$REPLICATION_USER\" AND host = \"%\");'" | tail -n1)
 
 if [ "$REPLICA_USER_EXISTS" -eq 1 ]; then
     log_info "Replication user already exists. Updating privileges..."
-    docker exec $SOURCE sh -c "export MYSQL_PWD=$MYSQL_ROOT_PASSWORD; mysql -u root -e 'GRANT REPLICATION SLAVE ON *.* TO \"edodidareplica\"@\"%\"; FLUSH PRIVILEGES;'"
+    docker exec $SOURCE sh -c "export MYSQL_PWD=$MYSQL_ROOT_PASSWORD; mysql -u root -e 'GRANT REPLICATION SLAVE ON *.* TO \"$REPLICATION_USER\"@\"%\"; FLUSH PRIVILEGES;'"
     check_exit_status "Replication user privileges updated." "Failed to update replication user privileges."
 else
     log_info "Creating replication user..."
-    docker exec $SOURCE sh -c "export MYSQL_PWD=$MYSQL_ROOT_PASSWORD; mysql -u root -e 'CREATE USER \"edodidareplica\"@\"%\" IDENTIFIED BY \"WTdlZG9kaWRhwqM\"; GRANT REPLICATION SLAVE ON *.* TO \"edodidareplica\"@\"%\"; FLUSH PRIVILEGES;'"
+    docker exec $SOURCE sh -c "export MYSQL_PWD=$MYSQL_ROOT_PASSWORD; mysql -u root -e 'CREATE USER \"$REPLICATION_USER\"@\"%\" IDENTIFIED BY \"$REPLICATION_PASSWORD\"; GRANT REPLICATION SLAVE ON *.* TO \"$REPLICATION_USER\"@\"%\"; FLUSH PRIVILEGES;'"
     check_exit_status "Replication user created." "Failed to create replication user."
 fi
 
