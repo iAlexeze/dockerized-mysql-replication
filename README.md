@@ -269,13 +269,13 @@ After setting up the source and replica servers, it’s crucial to test the repl
 
 Run the following commands on both the source and replica servers to clean up.
 
-On source server
+#### On the Source Server
 
 ```bash
 docker compose down source-database
 ```
 
-On replica server:
+#### On the Replica Server
 
 ```bash
 docker compose down replica-database
