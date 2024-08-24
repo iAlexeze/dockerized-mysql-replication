@@ -64,16 +64,18 @@ Update the following variables:
 ```bash
 SOURCE="source-database"  # Container name for the source database
 MYSQL_ROOT_PASSWORD="my_secure_root_password"
+REPLICATION_USER="my_replication_user"
+REPLICATION_PASSWORD="my_secure_replication_password"
+DATABASES=("demo_1" "demo_2" "demo_3")
+```
+
+(Optional)
+
+To enable future connection to source without using root user, set the following variables -  important for debugging, and 3rd party connections.
+
+```bash
 DEFAULT_USER="my_default_user"
 DEFAULT_PASSWORD="my_secure_default_password"
-databases=("demo_1" "demo_2" "demo_3")
-```
-
-This script will set up the source database server, create the listed databases, and output the necessary information for setting up the replica:
-
-```
-Current Log: 1.xxxxx
-Current Position: 2xxx
 ```
 
 #### 2.5 Run the Setup Script
@@ -84,7 +86,14 @@ Execute the setup script:
 ./setup_replication.sh
 ```
 
-If successful, you'll see a snippet with the `Log` and `Position` information. Copy this output as it will be needed for the replica setup.
+This script will set up the source database server, create the listed databases, and output the necessary information for setting up the replica:
+
+```
+Current Log: 1.xxxxx
+Current Position: 2xxx
+```
+
+If successful, you'll see the above snippet with the `Log` and `Position` information. Copy this output as it will be needed for the replica setup.
 
 ### 3. Setting Up the Replica Server
 
@@ -110,9 +119,18 @@ REPLICA="replica-database"  # Container name for the replica database
 SOURCE_HOST="source_ip_address"
 SOURCE_PORT=4440  # DO NOT PUT THIS IN QUOTES
 MYSQL_ROOT_PASSWORD="my_secure_root_password"
-MYSQL_USER="my_replication_user"
-MYSQL_PASSWORD="my_secure_replication_user_password"
-databases=("demo_1" "demo_2" "demo_3")
+REPLICATION_USER="my_replication_user"
+REPLICATION_PASSWORD="my_secure_replication_password"
+DATABASES=("demo_1" "demo_2" "demo_3")
+```
+
+(Optional)
+
+To enable future connection to replica without using root user -  important for debugging, and 3rd party connections.
+
+```bash
+DEFAULT_USER="my_default_user"
+DEFAULT_PASSWORD="my_secure_default_password"
 ```
 
 #### 3.2 Modify `compose.yml`
