@@ -267,6 +267,22 @@ After setting up the source and replica servers, it’s crucial to test the repl
 
 ---
 
+### 1. Clean Up
+
+Run the following commands on both the source and replica servers to clean up.
+
+On source server
+
+```bash
+docker compose down source-database
+```
+
+On replica server:
+
+```bash
+docker compose down replica-database
+```
+
 ## Conclusion
 
 With this setup and testing procedure, you can ensure that the MySQL replication between the source and replica servers is functioning correctly. This allows for efficient data synchronization and redundancy across your infrastructure.
@@ -281,3 +297,4 @@ For any questions or comments, please reach out via the repository's issue track
 ## Conclusion
 
 With this setup, you can easily manage data replication between a source server and multiple replicas, ensuring data consistency and redundancy across your infrastructure.
+
