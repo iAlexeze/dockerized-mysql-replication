@@ -42,9 +42,11 @@ REPLICA="replica-database" # Container name for replica database(If you changed 
 SOURCE_HOST="source_ip_address"
 SOURCE_PORT=4440
 MYSQL_ROOT_PASSWORD=my_secure_root_password
-MYSQL_USER=my_replication_user
-MYSQL_PASSWORD=my_secure_replication_user_password
-databases=("demo_1" "demo_2" "demo_3")
+DEFAULT_USER="my_default_user"
+DEFAULT_PASSWORD="my_secure_default_password"
+REPLICATION_USER="my_replication_user"
+REPLICATION_PASSWORD="my_secure_replication_password"
+DATABASES=("demo_1" "demo_2" "demo_3")
 
 
 # Variables from Source Server
@@ -73,7 +75,7 @@ done
 check_exit_status "$REPLICA database connection established." "Failed to connect to $REPLICA"
 
 log_info "Setting up databases and users..."
-for db in "${databases[@]}"; do
+for db in "${DATABASES[@]}"; do
     log_info "Checking if database $db exists..."
     DB_EXISTS=$(docker exec $REPLICA sh -c "export MYSQL_PWD=$MYSQL_ROOT_PASSWORD; mysql -u root -e 'SHOW DATABASES LIKE \"$db\";'")
     if [ -z "$DB_EXISTS" ]; then
@@ -84,6 +86,23 @@ for db in "${databases[@]}"; do
         log_info "Database **${yellow}$db${reset}** already exists. Skipping creation."
     fi
 done
+
+log_info "Setting up Default User - $DEFAULT_USER..."
+docker exec $SOURCE sh -c "export MYSQL_PWD=$MYSQL_ROOT_PASSWORD; mysql -u root -e 'CREATE USER IF NOT EXISTS \"$DEFAULT_USER\"@\"%\" IDENTIFIED BY \"$DEFAULT_PASSWORD\"; GRANT ALL PRIVILEGES ON *.* TO \"$DEFAULT_USER\"@\"%\"; FLUSH PRIVILEGES;'"
+check_exit_status "User $DEFAULT_USER set up." "Failed to set up user $DEFAULT_USER."
+
+log_info "Checking if replication user exists..."
+REPLICA_USER_EXISTS=$(docker exec $SOURCE sh -c "export MYSQL_PWD=$MYSQL_ROOT_PASSWORD; mysql -u root -e 'SELECT EXISTS(SELECT 1 FROM mysql.user WHERE user = \"$REPLICATION_USER\" AND host = \"%\");'" | tail -n1)
+
+if [ "$REPLICA_USER_EXISTS" -eq 1 ]; then
+    log_info "Replication user already exists. Updating privileges..."
+    docker exec $SOURCE sh -c "export MYSQL_PWD=$MYSQL_ROOT_PASSWORD; mysql -u root -e 'GRANT REPLICATION SLAVE ON *.* TO \"$REPLICATION_USER\"@\"%\"; FLUSH PRIVILEGES;'"
+    check_exit_status "Replication user privileges updated." "Failed to update replication user privileges."
+else
+    log_info "Creating replication user..."
+    docker exec $SOURCE sh -c "export MYSQL_PWD=$MYSQL_ROOT_PASSWORD; mysql -u root -e 'CREATE USER \"$REPLICATION_USER\"@\"%\" IDENTIFIED BY \"$REPLICATION_PASSWORD\"; GRANT REPLICATION SLAVE ON *.* TO \"$REPLICATION_USER\"@\"%\"; FLUSH PRIVILEGES;'"
+    check_exit_status "Replication user created." "Failed to create replication user."
+fi
 
 start_replica_statement="CHANGE REPLICATION SOURCE TO SOURCE_HOST='$SOURCE_HOST', SOURCE_PORT=$SOURCE_PORT, SOURCE_USER='$REPLICATION_USER', SOURCE_PASSWORD='$REPLICATION_PASSWORD', SOURCE_LOG_FILE='$CURRENT_LOG', SOURCE_LOG_POS=$CURRENT_POS; START REPLICA;"
 start_replica_cmd='export MYSQL_PWD=$MYSQL_ROOT_PASSWORD; mysql -u root -e "'

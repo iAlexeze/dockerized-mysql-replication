@@ -42,9 +42,9 @@ MYSQL_ROOT_PASSWORD="my_secure_root_password"
 DEFAULT_USER="my_default_user"
 DEFAULT_PASSWORD="my_secure_default_password"
 REPLICATION_USER="my_replication_user"
-REPLICATION_PASSWORD="my_secure_replication_user_password"
+REPLICATION_PASSWORD="my_secure_replication_password"
 
-databases=("demo_1" "demo_2" "demo_3")
+DATABASES=("demo_1" "demo_2" "demo_3")
 
 # Clean up and start containers
 echo
@@ -69,7 +69,7 @@ done
 check_exit_status "$SOURCE database connection established." "Failed to connect to $SOURCE"
 
 log_info "Setting up databases and users..."
-for db in "${databases[@]}"; do
+for db in "${DATABASES[@]}"; do
     log_info "Checking if database $db exists..."
     DB_EXISTS=$(docker exec $SOURCE sh -c "export MYSQL_PWD=$MYSQL_ROOT_PASSWORD; mysql -u root -e 'SHOW DATABASES LIKE \"$db\";'")
     if [ -z "$DB_EXISTS" ]; then
