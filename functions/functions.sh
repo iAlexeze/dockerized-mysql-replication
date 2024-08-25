@@ -58,6 +58,9 @@ start_container() {
     else
         log_success "container started."
     fi
+
+    # Change to the original directory
+    cd - >/dev/null 2>&1
 }
 
 # Function to stop and remove existing container
@@ -137,12 +140,14 @@ check_replication_status() {
     log_info "Checking replication status..."
     docker exec $container sh -c "export MYSQL_PWD=$MYSQL_ROOT_PASSWORD; mysql -u root -e 'SHOW SLAVE STATUS \G'" >/dev/null 2>&1
     check_exit_status "Replication status checked." "Failed to check replication status."
-
+    
+    cd replica 
     until docker compose logs -t -n 10 $container | grep -q "connected to source '$REPLICATION_USER@$SOURCE_HOST:$SOURCE_PORT'"; do
         log_info "Waiting for successful replication connection..."
         sleep 2
     done
-    check_exit_status "Connected to Remote Host successfully." "Failed to connect to remote host."
+    check_exit_status "Connected to Remote Host successfully." "Failed to connect to remote host.i"
+    cd ..
 }
 
 
@@ -179,8 +184,8 @@ fetch_replication_status() {
 # Function to update replica_setup.sh with current log and position
 update_replica_setup() {
     log_info "Updating replica_setup.sh with current log and position..."
-    sed -i "s/^CURRENT_LOG=.*/CURRENT_LOG=\"$CURRENT_LOG\"/" ../replica/replica_setup.sh
-    sed -i "s/^CURRENT_POS=.*/CURRENT_POS=\"$CURRENT_POS\"/" ../replica/replica_setup.sh
+    sed -i "s/^CURRENT_LOG=.*/CURRENT_LOG=\"$CURRENT_LOG\"/" replica/replica_setup.sh
+    sed -i "s/^CURRENT_POS=.*/CURRENT_POS=\"$CURRENT_POS\"/" replica/replica_setup.sh
     check_exit_status "replica_setup.sh updated." "Failed to update replica_setup.sh."
 }
 
@@ -188,5 +193,37 @@ update_replica_setup() {
 setup_replica_server() {
     log_info "Setting up Replica server..."
     scp -i "${SSH_KEY}" -o StrictHostKeyChecking=no -r setup.env replica functions "${SSH_USER}@${REPLICA_HOST}:/home/$SSH_USER/" > /dev/null 2>&1 
-    ssh -i "${SSH_KEY}" -o StrictHostKeyChecking=no "${SSH_USER}@${REPLICA_HOST}" 'bash -s' < "replica/replica_setup.sh"
+    ssh -i "${SSH_KEY}" -o StrictHostKeyChecking=no "${SSH_USER}@${REPLICA_HOST}" 'bash -s' < "./replica/replica_setup.sh"
+}
+
+# Function to cleanup the source container
+source_cleanup() {
+    log_info "Stopping and removing existing container..."
+
+    # Check if the container exists before attempting to remove it
+    if docker ps -a --format '{{.Names}}' | grep -q "^$SOURCE$"; then
+        docker rm $SOURCE --force
+        check_exit_status "Container stopped and removed." "Failed to stop/remove container."
+    else
+        echo "Container $SOURCE does not exist. Skipping removal."
+    fi
+
+    success_message "$SOURCE cleanup completed."
+}
+
+# Function to cleanup the replica container
+replica_cleanup() {
+    log_info "Stopping and removing existing container..."
+
+    # Execute the Docker command directly on the remote server, checking if the container exists first
+    ssh -i "${SSH_KEY}" -o StrictHostKeyChecking=no "${SSH_USER}@${REPLICA_HOST}" "
+        if docker ps -a --format '{{.Names}}' | grep -q '^$REPLICA$'; then
+            docker rm $REPLICA --force
+        else
+            echo 'Container $REPLICA does not exist. Skipping removal.'
+        fi
+    "
+    check_exit_status "Container stopped and removed." "Failed to stop/remove container."
+
+    success_message "$REPLICA cleanup completed."
 }
