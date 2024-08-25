@@ -47,6 +47,29 @@ check_exit_status() {
     fi
 }
 
+check_required_variables() {
+    local required_vars=(
+        "SSH_USER"
+        "SSH_KEY_KEY_NAME"
+        "SOURCE_HOST"
+        "REPLICA_HOST"
+        "SOURCE_PORT"
+    )
+    
+    local missing_vars=()
+    
+    for var in "${required_vars[@]}"; do
+        if [ -z "${!var}" ]; then
+            missing_vars+=("[$var]")
+        fi
+    done
+    
+    if [ ${#missing_vars[@]} -ne 0 ]; then
+        log_error "The following required variables are missing: ${yellow} ${missing_vars[*]}${reset}"
+        exit 1
+    fi
+}
+
 update_env_files() {
     local source_env="source/source.env"
     local source_desc="Source Environmental Variables"
@@ -56,6 +79,16 @@ update_env_files() {
     local source_compose_desc="Source Compose File"
     local replica_compose_file="replica/compose.yml"
     local replica_compose_desc="Replica Compose File"
+
+    # Set default values if variables are not set
+    MYSQL_ROOT_PASSWORD="${MYSQL_ROOT_PASSWORD:-root}"
+    MYSQL_USER="${MYSQL_USER:-mysql}"
+    DEFAULT_USER="${DEFAULT_USER:-mysql}"
+    DEFAULT_PASSWORD="${DEFAULT_PASSWORD:-mysql}"
+    REPLICATION_USER="${REPLICATION_USER:-mysqlreplica}"
+    REPLICATION_PASSWORD="${REPLICATION_PASSWORD:-mysqlreplica}"
+    SOURCE="${SOURCE:-source-database}"
+    REPLICA="${REPLICA:-replica-database}"
 
     log_info "Starting the update of source and replica environment files..."
 
@@ -72,17 +105,18 @@ update_env_files() {
     check_exit_status "$replica_desc updated successfully." "Failed to update $replica_desc."
 
     log_info "Updating $source_compose_desc..."
-    sed -i "s/^  source-database:/  ${SOURCE:-source-database}:/" $source_compose_file
-    sed -i "s/container_name: \"source-database\"/container_name: \"${SOURCE:-source-database}\"/" $source_compose_file
+    sed -i "s/^  source-database:/  ${SOURCE}:/g" $source_compose_file
+    sed -i "s/container_name: \"source-database\"/container_name: \"${SOURCE}\"/g" $source_compose_file
     check_exit_status "$source_compose_desc updated successfully." "Failed to update $source_compose_desc."
 
     log_info "Updating $replica_compose_desc..."
-    sed -i "s/^  replica-database:/  ${REPLICA:-replica-database}:/" $replica_compose_file
-    sed -i "s/container_name: \"replica-database\"/container_name: \"${REPLICA:-replica-database}\"/" $replica_compose_file
+    sed -i "s/^  replica-database:/  ${REPLICA}:/g" $replica_compose_file
+    sed -i "s/container_name: \"replica-database\"/container_name: \"${REPLICA}\"/g" $replica_compose_file
     check_exit_status "$replica_compose_desc updated successfully." "Failed to update $replica_compose_desc."
 
     log_info "Environment and compose files updated successfully."
 }
+
 
 
 # Function to start the replica container

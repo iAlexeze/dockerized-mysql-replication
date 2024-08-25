@@ -15,6 +15,9 @@ fi
 HOME_DIR="/home/${SSH_USER}"
 SSH_KEY="${HOME_DIR}/.ssh/$SSH_KEY_KEY_NAME"
 
+# check required variables
+check_required_variables
+
 # Update env files
 update_env_files
 
