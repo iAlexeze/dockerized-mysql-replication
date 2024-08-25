@@ -1,9 +1,9 @@
 services:
-  replica-database:
+  slave-database:
     image: mysql:8.0
     env_file:
       - ./replica.env
-    container_name: "replica-database"
+    container_name: "slave-database"
     restart: "on-failure"
     ports:
       - 4441:3306

@@ -1,9 +1,9 @@
 services:
-  source-database:
+  master-database:
     image: mysql:8.0
     env_file:
       - ./source.env
-    container_name: "source-database"
+    container_name: "master-database"
     restart: "on-failure"
     ports:
       - 30020:3306

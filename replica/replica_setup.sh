@@ -12,7 +12,7 @@ else
 fi
 
 CURRENT_LOG="1.000003"
-CURRENT_POS="2121"
+CURRENT_POS="1510"
 
 # Main script execution
 

@@ -15,6 +15,9 @@ fi
 HOME_DIR="/home/${SSH_USER}"
 SSH_KEY="${HOME_DIR}/.ssh/$SSH_KEY_KEY_NAME"
 
+# Update env files
+update_env_files
+
 # Debug start time
 debug "Replication Setup Started..."
 
@@ -30,4 +33,3 @@ update_replica_setup
 setup_replica_server
 
 success_message "MySQL source server setup completed successfully."
-

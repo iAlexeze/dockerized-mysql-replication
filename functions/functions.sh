@@ -47,6 +47,44 @@ check_exit_status() {
     fi
 }
 
+update_env_files() {
+    local source_env="source/source.env"
+    local source_desc="Source Environmental Variables"
+    local replica_env="replica/replica.env"
+    local replica_desc="Replica Environmental Variables"
+    local source_compose_file="source/compose.yml"
+    local source_compose_desc="Source Compose File"
+    local replica_compose_file="replica/compose.yml"
+    local replica_compose_desc="Replica Compose File"
+
+    log_info "Starting the update of source and replica environment files..."
+
+    log_info "Updating $source_desc..."
+    sed -i "s/^MYSQL_ROOT_PASSWORD=.*/MYSQL_ROOT_PASSWORD=\"$MYSQL_ROOT_PASSWORD\"/" $source_env
+    sed -i "s/^MYSQL_USER=.*/MYSQL_USER=\"$DEFAULT_USER\"/" $source_env
+    sed -i "s/^MYSQL_PASSWORD=.*/MYSQL_PASSWORD=\"$DEFAULT_PASSWORD\"/" $source_env
+    check_exit_status "$source_desc updated successfully." "Failed to update $source_desc."
+
+    log_info "Updating $replica_desc..."
+    sed -i "s/^MYSQL_ROOT_PASSWORD=.*/MYSQL_ROOT_PASSWORD=\"$MYSQL_ROOT_PASSWORD\"/" $replica_env
+    sed -i "s/^MYSQL_USER=.*/MYSQL_USER=\"$REPLICATION_USER\"/" $replica_env
+    sed -i "s/^MYSQL_PASSWORD=.*/MYSQL_PASSWORD=\"$REPLICATION_PASSWORD\"/" $replica_env
+    check_exit_status "$replica_desc updated successfully." "Failed to update $replica_desc."
+
+    log_info "Updating $source_compose_desc..."
+    sed -i "s/^  source-database:/  ${SOURCE:-source-database}:/" $source_compose_file
+    sed -i "s/container_name: \"source-database\"/container_name: \"${SOURCE:-source-database}\"/" $source_compose_file
+    check_exit_status "$source_compose_desc updated successfully." "Failed to update $source_compose_desc."
+
+    log_info "Updating $replica_compose_desc..."
+    sed -i "s/^  replica-database:/  ${REPLICA:-replica-database}:/" $replica_compose_file
+    sed -i "s/container_name: \"replica-database\"/container_name: \"${REPLICA:-replica-database}\"/" $replica_compose_file
+    check_exit_status "$replica_compose_desc updated successfully." "Failed to update $replica_compose_desc."
+
+    log_info "Environment and compose files updated successfully."
+}
+
+
 # Function to start the replica container
 start_container() {
     log_info "Starting container..."
