@@ -1,12 +1,12 @@
 services:
-  master-database:
+  source-database:
     image: mysql:8.0
     env_file:
       - ./source.env
-    container_name: "master-database"
+    container_name: "source-database"
     restart: "on-failure"
     ports:
-      - 30020:3306
+      - 3306:3306
     volumes:
       - ./mysql.conf.cnf:/etc/mysql/conf.d/mysql.conf.cnf
       # Map a directory to backup data. (Optional)
@@ -16,3 +16,4 @@ services:
 
 networks:
   replication-net:
+
