@@ -8,30 +8,29 @@ green="\\e[32m"
 yellow="\\e[33m"
 reset="\\e[0m"
 
-# Logging functions
-DATE=$(date '+%Y-%m-%d %H:%M:%S')
-
-debug() {
-    echo -e "${yellow}$DATE${reset} ${gray}DEBUG: ${reset} ${yellow}$1${reset}"
-}
-
+# Logging functions with dynamic timestamps
 log_info() {
+    local DATE=$(date '+%Y-%m-%d %H:%M:%S')
     echo -e "$DATE ${blue}INFO: ${reset} $1"
 }
 
 log_warn() {
+    local DATE=$(date '+%Y-%m-%d %H:%M:%S')
     echo -e "$DATE ${yellow}WARN: ${reset} $1"
 }
 
 log_success() {
+    local DATE=$(date '+%Y-%m-%d %H:%M:%S')
     echo -e "$DATE ${green}SUCCESS: ✔${reset} $1"
 }
 
 log_error() {
+    local DATE=$(date '+%Y-%m-%d %H:%M:%S')
     echo -e "$DATE ${red}ERROR ✖${reset} $1"
 }
 
 success_message() {
+    local DATE=$(date '+%Y-%m-%d %H:%M:%S')
     echo -e "$DATE ${green}✔ $1 ${reset}"
 }
 
