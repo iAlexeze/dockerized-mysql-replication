@@ -263,8 +263,14 @@ update_replica_setup() {
 # Function to transfer files and execute replica setup
 setup_replica_server() {
     log_info "Setting up Replica server..."
-    scp -i "${SSH_KEY}" -o StrictHostKeyChecking=no -r setup.env replica functions "${SSH_USER}@${REPLICA_HOST}:/home/$SSH_USER/" > /dev/null 2>&1 
-    ssh -i "${SSH_KEY}" -o StrictHostKeyChecking=no "${SSH_USER}@${REPLICA_HOST}" 'bash -s' < "./replica/replica_setup.sh"
+        
+    if [ "$REPLICA_HOST" == "localhost" ]; then
+        ./replica/replica_setup
+    else
+        scp -i "${SSH_KEY}" -o StrictHostKeyChecking=no -r setup.env replica functions "${SSH_USER}@${REPLICA_HOST}:/home/$SSH_USER/" > /dev/null 2>&1 
+        ssh -i "${SSH_KEY}" -o StrictHostKeyChecking=no "${SSH_USER}@${REPLICA_HOST}" 'bash -s' < "./replica/replica_setup.sh"
+
+    fi
 }
 
 # Function to cleanup the source container
